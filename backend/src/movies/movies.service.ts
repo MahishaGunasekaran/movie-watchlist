@@ -6,7 +6,7 @@ import axios from "axios";
 export class MoviesService {
     private readonly movieApiURL = 'http://www.omdbapi.com/';
 
-    async searchMovies(query: string): Promise<any[]> {
+    async searchMovies(query: string, page: number = 1): Promise<any[]> {
         if (!query) {
             throw new HttpException('Query is required', HttpStatus.BAD_REQUEST);
         }
@@ -16,6 +16,7 @@ export class MoviesService {
                 params: {
                     apikey: process.env.OMDB_API_KEY,
                     s: query,
+                    page: page,
                 },
             });
 

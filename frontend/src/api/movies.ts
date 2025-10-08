@@ -8,11 +8,10 @@ import type { Movie } from "../types/movie.type";
 
 const BASE_URL = "http://localhost:3001";
 
-export const searchMovies = async (query: string) => {
-    const response = await axios.get(`${BASE_URL}/movies/search`, {
-        params: { q: query },
-    })
-    return response.data.results
+export const searchMovies = async (query: string, page: number = 1) => {
+    const response = await fetch(`${BASE_URL}/movies/search?q=${query}&page=${page}`);
+    const data = await response.json();
+    return data;
 }
 
 // Goes to the backend

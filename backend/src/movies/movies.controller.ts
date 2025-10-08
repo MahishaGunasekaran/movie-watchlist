@@ -3,11 +3,13 @@ import { MoviesService } from './movies.service';
 
 @Controller('movies')
 export class MoviesController {
-      constructor(private readonly moviesService: MoviesService) {}
+  constructor(private readonly moviesService: MoviesService) { }
 
   @Get('search')
-  async search(@Query('q') query: string) {
-    const results = await this.moviesService.searchMovies(query);
-    return { results };
+  async search(
+    @Query('q') query: string,
+    @Query('page') page: number,
+  ) {
+    return this.moviesService.searchMovies(query, page);
   }
 }
