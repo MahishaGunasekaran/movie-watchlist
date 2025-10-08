@@ -1,46 +1,56 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Movie } from '../types/movie.type'
 import { getFavorites, removeFavorite } from '../api/movies'
+import { StarIcon as SolidStarIcon } from '@heroicons/react/24/solid'
+import styles from '../styles/Favorites.module.css'
+import Link from 'next/link'
 
 export default function FavoritesPage() {
-  const queryClient = useQueryClient()
+    const queryClient = useQueryClient()
 
-  const { data: favorites } = useQuery({
-    queryKey: ['favorites'],
-    queryFn: getFavorites,
-  })
+    const { data: favorites } = useQuery({
+        queryKey: ['favorites'],
+        queryFn: getFavorites,
+    })
 
-  const removeFavMutation = useMutation({
-    mutationFn: removeFavorite,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favorites'] }),
-  })
+    const removeFavMutation = useMutation({
+        mutationFn: removeFavorite,
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favorites'] }),
+    })
 
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">My Favorite Movies</h1>
+    return (
+    <div className={styles.container}>
+      <h1 className={styles.header}>My Favorite Movies</h1>
+      <p className={styles.subheader}>
+        Your saved movies are here. Remove any movie you no longer want.
+      </p>
+      <Link href="/" className={styles.homeLink}>
+        Back to Search
+      </Link>
 
       {favorites && favorites.length > 0 ? (
-        <div className="grid grid-cols-4 gap-4">
-          {favorites.map((movie: Movie, idx: number) => (
-            <div key={`${movie.imdbID}-${idx}`} className="border p-2">
+        <div className={styles.grid}>
+          {favorites.map((movie: Movie) => (
+            <div key={movie.imdbID} className={styles.card}>
               <img
-                src={movie.Poster}
+                src={movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.png'}
                 alt={movie.Title}
-                className="w-full h-64 object-cover mb-2"
+                className={styles.poster}
               />
-              <h3 className="text-lg font-bold">{movie.Title}</h3>
-              <p>{movie.Year}</p>
+              <h3 className={styles.title}>{movie.Title}</h3>
+              <p className={styles.year}>{movie.Year}</p>
               <button
                 onClick={() => removeFavMutation.mutate(movie.imdbID)}
-                className="bg-red-500 text-white px-2 py-1 mt-2 w-full"
+                className={styles.button}
               >
+                <SolidStarIcon className="w-5 h-5" />
                 Remove Favorite
               </button>
             </div>
           ))}
         </div>
       ) : (
-        <p>You have no favorite movies yet.</p>
+        <p className={styles.subheader}>You have no favorite movies yet.</p>
       )}
     </div>
   )

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient, QueryKey } from "@tanstack/react-query"
 import { searchMovies, addFavorite, removeFavorite, getFavorites } from "../api/movies";
-import Link from 'next/link'
-
+import Link from 'next/link';
+import { StarIcon as OutlineStarIcon } from '@heroicons/react/24/outline'
+import { StarIcon as SolidStarIcon } from '@heroicons/react/24/solid'
+import styles from '../styles/Home.module.css';
 
 export default function HomePage() {
     const [query, setQuery] = useState("");
@@ -13,11 +15,6 @@ export default function HomePage() {
         queryFn: () => searchMovies(query),
         enabled: false,
     })
-
-    // const { data: favorites } = useQuery({
-    //     queryKey: ['favorites'],
-    //     queryFn: getFavorites,
-    // })
 
     const addFavMutation = useMutation({
         mutationFn: addFavorite,
@@ -47,59 +44,64 @@ export default function HomePage() {
         favorites?.some((f: any) => f.imdbID === imdbID)
 
     return (
-        <div>
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Movie Search</h1>
-                <Link href="/favorites" className="bg-green-500 text-white px-4 py-2 rounded">
-                    My Favorites
-                </Link>
-            </div>
+        <div className={styles.container}>
+            <h1 className={styles.title}>Movie Search</h1>
+            <p className={styles.subtitle}>Find your favorite movies and save them!</p>
+            <Link href="/favorites" className={styles.favLink}>My Favorites</Link>
 
-            <div className="flex justify-center mb-6">
+            <div className={styles.searchContainer}>
                 <input
                     type="text"
                     value={query}
                     onChange={e => setQuery(e.target.value)}
                     placeholder="Search movies..."
-                    className="border border-gray-300 rounded-l px-4 py-2 w-80 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className={styles.searchInput}
                 />
-                <button
-                    onClick={handleSearch}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 transition"
-                >
+                <button onClick={handleSearch} className={styles.searchButton}>
                     Search
                 </button>
             </div>
-            {searchResults && searchResults.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {
+                searchResults && searchResults.length > 0 ? (
+                    <div className={styles.grid}>
+                        {searchResults?.map((movie: any) => (
+                            <div key={movie.imdbID} className={styles.card}>
+                                <img src={movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.png'} alt={movie.Title} />
+                                <h3>{movie.Title}</h3>
+                                <p>{movie.Year}</p>
+                                <button
+                                    onClick={() =>
+                                        isFavorite(movie.imdbID)
+                                            ? removeFavMutation.mutate(movie.imdbID)
+                                            : addFavMutation.mutate(movie)
+                                    }
+                                    className={styles.favBtn}
+                                >
+                                    {isFavorite(movie.imdbID) ? (
+                                        <>
+                                            <SolidStarIcon className="w-5 h-5" />
+                                            Remove
+                                        </>
+                                    ) : (
+                                        <>
+                                            <OutlineStarIcon className="w-5 h-5" />
+                                            Add
+                                        </>
+                                    )}
+                                </button>
 
-                    {searchResults?.map((movie: any, idx: number) => (
-                        <div key={`${movie.imdbID}-${idx}`} className="bg-white rounded shadow p-4 flex flex-col items-center">
-                            <img src={movie.Poster} alt={movie.Title} className="w-full h-64 object-cover rounded mb-4" />
-                            <h3 className="text-lg font-semibold mb-1 text-center">{movie.Title}</h3>
-                            <p className="text-gray-500 mb-2">{movie.Year}</p>
-                            {isFavorite(movie.imdbID) ? (
-                                <button
-                                    onClick={() => removeFavMutation.mutate(movie.imdbID)}
-                                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-                                >
-                                    Remove Favorite
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={() => addFavMutation.mutate(movie)}
-                                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                                >
-                                    Add Favorite
-                                </button>
-                            )}
-                        </div>
-                    ))
-                    }
-                </div>
-            ) : (
-                <p>No results to Display</p>
-            )}
-        </div >
-    )
+
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p>No results to Display</p >
+                )
+            }
+        </div>
+    );
 }
+
+
+
+
