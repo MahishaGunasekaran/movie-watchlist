@@ -94,7 +94,7 @@ export default function HomePage() {
                         return uniqueMovies.map((movie: any) => (
                             <div key={movie.imdbID} className={styles.card}>
                                 <img
-                                    src={movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.png'}
+                                    src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.jpg"}
                                     alt={movie.Title}
                                 />
                                 <h3>{movie.Title}</h3>

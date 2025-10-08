@@ -33,7 +33,7 @@ export default function FavoritesPage() {
           {favorites.map((movie: Movie) => (
             <div key={movie.imdbID} className={styles.card}>
               <img
-                src={movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.png'}
+                src={movie.Poster !== 'N/A' ? movie.Poster : '/placeholder.jpg'}
                 alt={movie.Title}
                 className={styles.poster}
               />
