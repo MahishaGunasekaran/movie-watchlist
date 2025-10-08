@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient, QueryKey } from "@tanstack/react-query"
 import { searchMovies, addFavorite, removeFavorite, getFavorites } from "../api/movies";
-import type { Movie } from "../types/movie.type"
+import Link from 'next/link'
 
 
 export default function HomePage() {
@@ -48,9 +48,13 @@ export default function HomePage() {
 
     return (
         <div>
-            <div className="min-h-screen bg-gray-100 p-6">
-                <h1 className="text-4xl font-bold text-center mb-6">Movie Search</h1>
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-2xl font-bold">Movie Search</h1>
+                <Link href="/favorites" className="bg-green-500 text-white px-4 py-2 rounded">
+                    My Favorites
+                </Link>
             </div>
+
             <div className="flex justify-center mb-6">
                 <input
                     type="text"
@@ -66,30 +70,36 @@ export default function HomePage() {
                     Search
                 </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {searchResults?.map((movie: any, idx: number) => (
-                    <div key={`${movie.imdbID}-${idx}`} className="bg-white rounded shadow p-4 flex flex-col items-center">
-                        <img src={movie.Poster} alt={movie.Title} className="w-full h-64 object-cover rounded mb-4" />
-                        <h3 className="text-lg font-semibold mb-1 text-center">{movie.Title}</h3>
-                        <p className="text-gray-500 mb-2">{movie.Year}</p>
-                        {isFavorite(movie.imdbID) ? (
-                            <button
-                                onClick={() => removeFavMutation.mutate(movie.imdbID)}
-                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-                            >
-                                Remove Favorite
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => addFavMutation.mutate(movie)}
-                                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                            >
-                                Add Favorite
-                            </button>
-                        )}
-                    </div>
-                ))}
-            </div>
+            {searchResults && searchResults.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+                    {searchResults?.map((movie: any, idx: number) => (
+                        <div key={`${movie.imdbID}-${idx}`} className="bg-white rounded shadow p-4 flex flex-col items-center">
+                            <img src={movie.Poster} alt={movie.Title} className="w-full h-64 object-cover rounded mb-4" />
+                            <h3 className="text-lg font-semibold mb-1 text-center">{movie.Title}</h3>
+                            <p className="text-gray-500 mb-2">{movie.Year}</p>
+                            {isFavorite(movie.imdbID) ? (
+                                <button
+                                    onClick={() => removeFavMutation.mutate(movie.imdbID)}
+                                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                                >
+                                    Remove Favorite
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => addFavMutation.mutate(movie)}
+                                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
+                                >
+                                    Add Favorite
+                                </button>
+                            )}
+                        </div>
+                    ))
+                    }
+                </div>
+            ) : (
+                <p>No results to Display</p>
+            )}
         </div >
     )
 }
