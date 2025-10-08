@@ -6,7 +6,7 @@ import type { Movie } from '../types/movie.type';
 export class FavoritesController {
     constructor(private readonly favoritesService: FavoritesService) { }
 
-    @Post(":movie")
+    @Post()
     addFavorite(@Body() movie: Movie): string {
         this.favoritesService.addFavorite(movie);
         return 'Movie added to favorites';
