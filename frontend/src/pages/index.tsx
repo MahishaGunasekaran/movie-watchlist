@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { searchMovies } from "../api/movies";
+import { useQuery, useMutation, useQueryClient, QueryKey } from "@tanstack/react-query"
+import { searchMovies, addFavorite, removeFavorite, getFavorites } from "../api/movies";
 
 export default function HomePage() {
     const [query, setQuery] = useState("");
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
 
     const { data: searchResults, refetch } = useQuery({
         queryKey: ['search', query],
@@ -12,13 +12,35 @@ export default function HomePage() {
         enabled: false,
     })
 
+    const addFavMutation = useMutation({
+        mutationFn: addFavorite,
+        onSuccess: () => queryClient.invalidateQueries({
+            queryKey: ['favorites'],
+        })
+    });
+
+    const removeFavMutation = useMutation({
+        mutationFn: removeFavorite,
+        onSuccess: () => queryClient.invalidateQueries({
+            queryKey: ['favorites'],
+        })
+    })
 
     const handleSearch = () => {
         if (query.trim()) refetch()
     }
 
+
+    const { data: favorites } = useQuery({
+        queryKey: ['favorites'],
+        queryFn: getFavorites,
+    })
+
+    const isFavorite = (imdbID: string) =>
+        favorites?.some((f: any) => f.imdbID === imdbID)
+
     return (
-        <>
+        <div>
             <div className="min-h-screen bg-gray-100 p-6">
                 <h1 className="text-4xl font-bold text-center mb-6">Movie Search</h1>
             </div>
@@ -37,7 +59,30 @@ export default function HomePage() {
                     Search
                 </button>
             </div>
-            {searchResults}
-        </>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {searchResults?.map((movie: any, idx: number) => (
+                    <div key={`${movie.imdbID}-${idx}`} className="bg-white rounded shadow p-4 flex flex-col items-center">
+                        <img src={movie.Poster} alt={movie.Title} className="w-full h-64 object-cover rounded mb-4" />
+                        <h3 className="text-lg font-semibold mb-1 text-center">{movie.Title}</h3>
+                        <p className="text-gray-500 mb-2">{movie.Year}</p>
+                        {isFavorite(movie.imdbID) ? (
+                            <button
+                                onClick={() => removeFavMutation.mutate(movie.imdbID)}
+                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                            >
+                                Remove Favorite
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => addFavMutation.mutate(movie)}
+                                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
+                            >
+                                Add Favorite
+                            </button>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div >
     )
 }
