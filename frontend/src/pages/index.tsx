@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient, QueryKey } from "@tanstack/react-query"
 import { searchMovies, addFavorite, removeFavorite, getFavorites } from "../api/movies";
+import type { Movie } from "../types/movie.type"
+
 
 export default function HomePage() {
     const [query, setQuery] = useState("");
@@ -11,6 +13,11 @@ export default function HomePage() {
         queryFn: () => searchMovies(query),
         enabled: false,
     })
+
+    // const { data: favorites } = useQuery({
+    //     queryKey: ['favorites'],
+    //     queryFn: getFavorites,
+    // })
 
     const addFavMutation = useMutation({
         mutationFn: addFavorite,
