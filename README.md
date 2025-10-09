@@ -182,6 +182,7 @@ cd backend
 npm install
 create .env file
 # set OMDB_API_KEY in .env
+OMDB_API_KEY="<your-api-key>"
 npm run start:dev 
 ```
 
