@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Movie } from '../types/movie.type'
-import { getFavorites, removeFavorite } from '../api/movies'
+import { getFavorites, removeFavorite, addFavorite } from '../api/movies'
 import { StarIcon as SolidStarIcon } from '@heroicons/react/24/solid'
+import { StarIcon as OutlineStarIcon } from '@heroicons/react/24/outline'
 import styles from '../styles/Favorites.module.css'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { fetchRecommendations } from "../utils/localFavorites";
+import { fetchRecommendations, isFavorite as checkFavorite } from "../utils/localFavorites";
 
 export default function FavoritesPage() {
   const queryClient = useQueryClient()
@@ -27,6 +28,15 @@ export default function FavoritesPage() {
     mutationFn: removeFavorite,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favorites'] }),
   })
+
+  const addFavMutation = useMutation({
+          mutationFn: addFavorite,
+          onSuccess: () => queryClient.invalidateQueries({
+              queryKey: ['favorites'],
+          })
+      });
+
+  const isFavorite = (imdbID: string) => checkFavorite(favorites || [], imdbID)
 
   return (
     <div className={styles.container}>
@@ -61,8 +71,6 @@ export default function FavoritesPage() {
             ))}
           </div>
           <h2>Movies You May Like</h2>
-          {console.log(recommendations)}
-          {console.log(favorites)}
           <div className={styles.recommendationsWrapper}>
             <div className={styles.recommendationsGrid}>
               {recommendations.map((movie) => (
@@ -74,6 +82,26 @@ export default function FavoritesPage() {
                   />
                   <h3 className={styles.title}>{movie.title}</h3>
                   <p className={styles.year}>{movie.year}</p>
+                  <button
+                    onClick={() =>
+                      isFavorite(movie.imdbID)
+                        ? removeFavMutation.mutate(movie.imdbID)
+                        : addFavMutation.mutate(movie)
+                    }
+                    className={styles.favBtn}
+                  >
+                    {isFavorite(movie.imdbID) ? (
+                      <>
+                        <SolidStarIcon className="w-5 h-5" />
+                        Remove
+                      </>
+                    ) : (
+                      <>
+                        <OutlineStarIcon className="w-5 h-5" />
+                        Add
+                      </>
+                    )}
+                  </button>
                 </div>
               ))}
             </div>

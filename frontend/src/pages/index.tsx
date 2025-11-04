@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { StarIcon as OutlineStarIcon } from '@heroicons/react/24/outline'
 import { StarIcon as SolidStarIcon } from '@heroicons/react/24/solid'
 import styles from '../styles/Home.module.css';
+import { isFavorite as checkFavorite } from '../utils/localFavorites';
 
 export default function HomePage() {
     const [query, setQuery] = useState("");
@@ -50,8 +51,7 @@ export default function HomePage() {
         queryFn: getFavorites,
     })
 
-    const isFavorite = (imdbID: string) =>
-        favorites?.some((f: any) => f.imdbID === imdbID)
+    const isFavorite = (imdbID: string) => checkFavorite(favorites || [], imdbID);
 
     const searchResults = data?.pages.flat() || [];
 

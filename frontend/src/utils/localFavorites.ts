@@ -29,6 +29,10 @@ export const removeFavoriteFromStorage = (imdbID: string) => {
   saveFavoritesToStorage(favorites);
 }
 
+export const isFavorite = (favorites: Movie[], imdbID: string) => {
+  return favorites?.some((f) => f.imdbID === imdbID)
+}
+
 export const fetchRecommendations = async (favorites: Movie[]) => {
   try {
     const result = await fetch("http://localhost:3001/recommendations", {
