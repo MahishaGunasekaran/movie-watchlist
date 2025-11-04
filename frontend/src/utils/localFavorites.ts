@@ -1,3 +1,4 @@
+import FavoritesPage from '../pages/favorites';
 import type { Movie } from '../types/movie.type';
 
 const FAVORITES_KEY = 'favoriteMovies';
@@ -26,3 +27,21 @@ export const removeFavoriteFromStorage = (imdbID: string) => {
   favorites = favorites.filter(f => f.imdbID !== imdbID);
   saveFavoritesToStorage(favorites);
 }
+
+export const fetchRecommendations = async (favorites: Movie[]) => {
+  try {
+    const result = await fetch("https://localhost:3001/recommendations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ favorites }),
+    });
+    if (!result.ok) {
+      throw new Error("Failed to fetch recommendations");
+    }
+    const data = await result.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+};
