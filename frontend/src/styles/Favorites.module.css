@@ -98,3 +98,44 @@
 .button svg {
   margin-right: 0.5rem;
 }
+
+.sectionHeader {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem 0;
+  color: #1e3a8a;
+}
+
+.recommendationsWrapper {
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  width: 100%;
+}
+
+.recommendationsGrid {
+  display: flex;
+  gap: 1rem;
+  min-width: max-content; /* ensures horizontal scrolling works */
+}
+
+.recommendationsGrid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.recommendationsGrid::-webkit-scrollbar-thumb {
+  background-color: #3b82f6;
+  border-radius: 4px;
+}
+
+.card {
+  min-width: 160px; /* show ~5 cards if container is wide enough */
+  flex: 0 0 auto;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem;
+}

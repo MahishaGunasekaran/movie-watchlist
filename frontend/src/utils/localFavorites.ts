@@ -1,3 +1,4 @@
+import { Result } from 'postcss';
 import FavoritesPage from '../pages/favorites';
 import type { Movie } from '../types/movie.type';
 
@@ -30,12 +31,13 @@ export const removeFavoriteFromStorage = (imdbID: string) => {
 
 export const fetchRecommendations = async (favorites: Movie[]) => {
   try {
-    const result = await fetch("https://localhost:3001/recommendations", {
+    const result = await fetch("http://localhost:3001/recommendations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ favorites }),
     });
     if (!result.ok) {
+      console.log(result);
       throw new Error("Failed to fetch recommendations");
     }
     const data = await result.json();

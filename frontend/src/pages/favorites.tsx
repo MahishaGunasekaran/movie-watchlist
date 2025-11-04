@@ -15,8 +15,8 @@ export default function FavoritesPage() {
     queryFn: getFavorites,
   })
 
-   useEffect(() => {
-    if(favorites && favorites.length > 0) {
+  useEffect(() => {
+    if (favorites && favorites.length > 0) {
       fetchRecommendations(favorites).then(setRecommendations);
     }
   }, [favorites])
@@ -61,14 +61,22 @@ export default function FavoritesPage() {
             ))}
           </div>
           <h2>Movies You May Like</h2>
-          <div className={styles.grid}>
-            {recommendations.map((movie: Movie) => (
-              <div key={movie.imdbID} className={styles.card}>
-                <img src={movie.Poster !== "N/A" ? movie.Poster : "/placeholder.png"} />
-                <h3 className={styles.title}>{movie.Title}</h3>
-                <p className={styles.year}>{movie.Year}</p>
-              </div>
-            ))}
+          {console.log(recommendations)}
+          {console.log(favorites)}
+          <div className={styles.recommendationsWrapper}>
+            <div className={styles.recommendationsGrid}>
+              {recommendations.map((movie) => (
+                <div key={movie.imdbID} className={styles.card}>
+                  <img
+                    src={movie.poster !== "N/A" ? movie.poster : "/placeholder.jpg"}
+                    alt={movie.title}
+                    className={styles.poster}
+                  />
+                  <h3 className={styles.title}>{movie.title}</h3>
+                  <p className={styles.year}>{movie.year}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </>
       ) : (
